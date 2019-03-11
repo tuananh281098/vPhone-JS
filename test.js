@@ -1,7 +1,6 @@
 const north   = require('./north.js');
 const central = require('./central.js');
 const south   = require('./south.js');
-//console.log(north.onsets);
 
 function inArray(needle,haystack){
     var count=haystack.length;
@@ -18,15 +17,6 @@ function getElement(array, value){
   }
   return null;
 }
-// function deleteSpace(str){
-//   let i = 0;
-//   while (str[i] == ' ')
-//   {
-//     str[i] = str[i + 1];
-//     i++;
-//   }
-//   return str;
-// }
 function importVariable(dialect){
   var onsets      = dialect.onsets
   var nuclei      = dialect.nuclei
@@ -63,9 +53,7 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
   if (l > 0){
     if(getElement(onsets, word.slice(0,3)) != null) {
       ons = getElement(onsets, word.slice(0,3));
-      //console.log(getElement(north.onsets, word.slice(0,3)));
       oOffset = 3
-        //console.log(ons);
     }
     else if (getElement(onsets, word.slice(0,2)) != null) {
       ons = getElement(onsets,word.slice(0,2));
@@ -76,7 +64,7 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
       ons = getElement(onsets, word[0]);
       oOffset = 1
     }
-    //------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     if (getElement(codas, word.slice(l-2, l)) != null) {
       cod = getElement(codas, word.slice(l-2, l));
       cOffset = 2
@@ -85,7 +73,7 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
       cod = getElement(codas, word[l-1]);
       cOffset = 1
     }
-    //---------------------------------------------------------------
+    //--------------------------------------------------------------------------
     if(word.slice(0,2) === 'gi' && word.slice(0,2) === cod && word.length === 3){
       nucl = 'i'
       ons = 'z'
@@ -94,7 +82,7 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
       nucl = word.slice(oOffset, l-cOffset)
     }
     // console.log('nucl' + nucl)
-    //--------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     if (getElement(nuclei, nucl) != null) {
       if (oOffset == 0) {
         if (glottal == 1) {
@@ -153,7 +141,7 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
     else {//just run here
       return [null, null, null, null]
     }
-    //----------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     if (dialect == 'n'){
       if (nuc == 'a') {
         if (cod == 'k' && cOffset == 2) {
@@ -237,17 +225,15 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
         ton = '1'
       }
     }
-    //-----------------------------------------------
+    //--------------------------------------------------------------------------
     if (cOffset != 0){
       if ((dialect == 'n' || dialect == 's') && ton == '21g' && inArray(cod, ['p', 't', 'k'])){
             ton = '21'
       }
 
-    // # odification for sắc in closed syllables (Northern and Central only)
       if (((dialect == 'n' && ton == '24') || (dialect == 'c' && ton == '13')) && inArray(cod, ['p', 't', 'k'])){
         ton = '45'
       }
-    //
       if (cao == 1){
         if (ton == '5' && inArray(cod, ['p', 't', 'k'])){
           ton = '5b'
@@ -257,7 +243,6 @@ function trans (word, dialect, glottal, pham, cao, palatals, delimit) {
         }
       }
 
-    // # labialized allophony (added 17.09.08)
       if (inArray(nuc, ['u', 'o', 'ɔ'])){
         if (cod == 'ŋ'){
           cod = 'ŋ͡m'
@@ -277,26 +262,16 @@ function convert (word, dialect, glottal, pham, cao, palatals, delimit) {
   ton = 0
   seq = ''
 
-  // try:
-  //console.log('convert');
   var [ons, nuc, cod, ton] = trans(word, dialect, glottal, pham, cao, palatals)
-  //console.log([ons, nuc, cod, ton]);
-  //console.log('ons;ons);
   console.log('word ' + word)
     if(word.length > 0){
       if (ons == null && nuc == null && cod == null && ton == null) {
           seq = '[' + word + ']'
-          //console.log('run')
       }
       else {
         seq = delimit + [ons, nuc, cod, ton].join('') + delimit
        }
     }
-
-  //         seq = delimit+delimit.join(filter(None, (ons, nuc, cod, ton)))+delimit
-  // except (TypeError), e:
-  //     pass
-  //console.log('seq ' + seq);
   return seq
 }
 function main(text, dialect) {
@@ -346,32 +321,11 @@ function main(text, dialect) {
     }
     wordsCount++;
   }
-  // for(var j = 0; j < words.length; j++){
-  //   console.log('test ' + words[j]+ ' ');
-  // }
-  // for(var i = 0; i < temp+1; i++){
-  //   if(text[i] != ' '){
-  //     if(i==0){
-  //       words[temp] = text[i];
-  //     }
-  //     else{
-  //       line[temp] += text[i];
-  //     }
-  //   }
-  //   else{
-  //     temp+=1;
-  //     line[temp] = '';
-  //   }
-  // }
   var compound = ''
-  var ortho = ''
-  //var words = line[i].split();
+  var ortho = '';
   for(var j = 0; j < words.length; j++){
     if(words[j].length != null){
       word = words[j].trim();
-      //var onsets = Object.keys(north.onsets);
-      //console.log(inArray(word, onsets));
-     // console.log('word ' + word);
       ortho += word;
       word = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()"@]/g,"").toLowerCase()
       //console.log(word.length);
@@ -382,7 +336,6 @@ function main(text, dialect) {
         }
         if(j < words.length-1){
           seq = seq + ' '
-          //console.log(word);
         }
         compound = compound + seq
       }
@@ -398,6 +351,3 @@ function main(text, dialect) {
 }
 
 main('they said:" chúng tôi vd# vv @ % !@$%^!@#$%^&*() ! @ # $ % ^ & * ( ) [ ] # muốn      dcvd có 1 sản phẩm    hoàn chỉnh  về âm vị"    ', 's');
-//console.log(trans('ngoan nao nghw \n sdv fds fds daes ', 'n', 0, 0, 0, 0, 0));
-
-//console.log(onsets)
